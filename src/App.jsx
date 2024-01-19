@@ -8,6 +8,7 @@ function useSearch() {
   const [error, setError] = useState(null);
   const isFirstTime = useRef(true);
 
+  //This code is executed the first time and anytime any of its dependencies changes
   useEffect(() => {
     if (isFirstTime.current) {
       isFirstTime.current = search === ''
@@ -34,11 +35,11 @@ function useSearch() {
 function App() {
   const { search, setSearch, error } = useSearch();
   const [sort, setSort] = useState(false);
-  const { movies, getMovies, isLoading } = useMovies({ search, sort });
+  const { movies, getMovies, isLoading } = useMovies({ sort });
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    getMovies();
+    getMovies({ search });
   }
 
   const handleChange = (event) => {
@@ -47,7 +48,7 @@ function App() {
     setSearch(newNameFilter);
   }
 
-  const handleSort = () =>{
+  const handleSort = () => {
     setSort(!sort);
   }
 
@@ -66,7 +67,7 @@ function App() {
         {
           isLoading
             ? <div className="loading-container">
-                <div className="loading-spinner"></div>
+              <div className="loading-spinner"></div>
             </div>
             : <Movies movies={movies} />
         }
