@@ -32,11 +32,12 @@ function useSearch() {
 }
 
 function App() {
-  const { movies } = useMovies();
   const { search, setSearch, error } = useSearch();
+  const { movies, getMovies, isLoading } = useMovies({ search });
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    getMovies();
   }
 
   const handleChange = (event) => {
@@ -53,10 +54,16 @@ function App() {
           <input style={{ border: '1px solid transparent', borderColor: error ? 'red' : 'transparent' }} onChange={handleChange} value={search} placeholder='Sherlock Holmes, Avengers Endgame, The Godfather...'></input>
           <button type='submit'>Search</button>
         </form>
-        {error && <p style= {{color: 'red'}}>{error}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
       </header>
       <main>
-        <Movies movies={movies} />
+        {
+          isLoading
+            ? <div class="loading-container">
+                <div class="loading-spinner"></div>
+            </div>
+            : <Movies movies={movies} />
+        }
       </main>
     </div >
 
