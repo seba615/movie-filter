@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useEffect } from 'react';
+import { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { searchMovies } from '../services/movies'
 
 export function useMovies({ search, sort }) {
@@ -8,9 +8,10 @@ export function useMovies({ search, sort }) {
     //This value is persisted in any render. It's always available.
     const previousSearch = useRef(search);
 
-    //Avoid recreating this function by injecting the parameter
-    const getMovies = useMemo(() => {
-        return async ({ search }) => {
+    //The same as useMemo but for functions
+    const getMovies = useCallback(
+        //Avoid recreating this function by injecting the parameter
+        async ({ search }) => {
             if (search === previousSearch.current)
                 return;
 
@@ -21,12 +22,8 @@ export function useMovies({ search, sort }) {
                 setMovies(newMovies)
                 setIsLoading(false);
             }, 2000);
-        }
-    }, [search]);
+        }, [search]);
 
-    useEffect(() => {
-        console.log('rerender')
-    }, [getMovies])
     //This is going to be executed the first time and when one of the dependencies changes.
     //Otherwhise, since 'Search' changes on every word, it's going to be rewritten.
     const sortedMovies = useMemo(() => {
